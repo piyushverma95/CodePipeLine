@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: openjdk8
+ #   commands:
+ #     - java -version
+  build:
+    commands:
+      - echo Build started on `date`
+      - java -version
+      - cat /etc/os-release
+      - mvn clean compile -DskipTests
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - mvn package -DskipTests
+     # - printf '{"ImageURI":"969829910614.dkr.ecr.us-east-2.amazonaws.com/ecs-taskonly-repo:codepipeline-app"}' > imageDetail.json
+artifacts:
+  files:
+    - target/CodePipeline-0.0.1-SNAPSHOT.jar
+    - imageDetail.json
+   # - imagedefinitions.json
+  discard-paths: yes

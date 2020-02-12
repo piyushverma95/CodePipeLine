@@ -1,0 +1,9 @@
+version: 1
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "arn:aws:ecs:us-east-2:969829910614:task-definition/TaskOnlyTaskDefinition:10"
+        LoadBalancerInfo:
+          ContainerName: "TaskOnly-TaskDefinition"
+          ContainerPort: 8080
