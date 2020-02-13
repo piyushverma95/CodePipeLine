@@ -1,6 +1,6 @@
 FROM java:8-jdk-alpine
 
-COPY ./CodePipeline-0.0.1-SNAPSHOT.jar /usr/app/
+COPY CodePipeline-0.0.1-SNAPSHOT.jar /usr/app/
 
 WORKDIR /usr/app
 
