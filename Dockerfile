@@ -1,22 +1,10 @@
-FROM maven:3-jdk-8
+FROM java:8-jdk-alpine
 
-RUN mvn -version
+COPY $CODEBUILD_SRC_DIR/target/CodePipeline-0.0.1-SNAPSHOT.jar /usr/app/
 
 WORKDIR /usr/app
 
-COPY * /usr/app/
-
-RUN ls -l
-
-RUN mvn clean compile -DskipTests
-
-RUN mvn package -DskipTests
-
-RUN ls -l
-
-RUN cd target
-
-#RUN mkdir -p /usr/app/data/
+RUN mkdir -p /usr/app/data/
 
 RUN sh -c 'touch CodePipeline-0.0.1-SNAPSHOT.jar'
 
