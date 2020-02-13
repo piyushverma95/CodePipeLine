@@ -10,6 +10,8 @@ RUN mvn clean compile -DskipTests
 
 RUN mvn package -DskipTests
 
+RUN ls -l
+
 RUN cd target
 
 #RUN mkdir -p /usr/app/data/
