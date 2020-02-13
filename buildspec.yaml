@@ -1,25 +1,61 @@
 version: 0.2
-
 phases:
-  install:
-    runtime-versions:
-      java: openjdk8
- #   commands:
- #     - java -version
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - REPOSITORY_URI=969829910614.dkr.ecr.us-east-2.amazonaws.com/ecs-taskonly-repo
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
   build:
     commands:
       - echo Build started on `date`
-      - java -version
-      - cat /etc/os-release
       - mvn clean compile -DskipTests
+      - mvn package -DskipTests
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
       - echo Build completed on `date`
-      - mvn package -DskipTests
-     # - printf '{"ImageURI":"969829910614.dkr.ecr.us-east-2.amazonaws.com/ecs-taskonly-repo:codepipeline-app"}' > imageDetail.json
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"springapp","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json 
 artifacts:
-  files:
-    - target/CodePipeline-0.0.1-SNAPSHOT.jar
-    - imageDetail.json
-   # - imagedefinitions.json
-  discard-paths: yes
+    files:
+      - target/CodePipeline-0.0.1-SNAPSHOT.jar
+      - imagedefinitions.json
+      
+      
+      
+      # wrong buildspec.yml 
+      # version: 0.2
+
+# phases:
+  # install:
+    # runtime-versions:
+      # java: openjdk8
+    # commands:
+      # - java -version
+  # build:
+    # commands:
+      # - echo Build started on `date`
+      # - java -version
+      # - cat /etc/os-release
+      # - mvn clean compile -DskipTests
+  # post_build:
+    # commands:
+      # - echo Build completed on `date`
+      # - mvn package -DskipTests
+      # - printf '{"ImageURI":"969829910614.dkr.ecr.us-east-2.amazonaws.com/ecs-taskonly-repo:codepipeline-app"}' > imageDetail.json
+# artifacts:
+  # files:
+    # - target/CodePipeline-0.0.1-SNAPSHOT.jar
+    # - imageDetail.json
+    # - imagedefinitions.json
+  # discard-paths: yes
