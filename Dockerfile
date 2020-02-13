@@ -6,6 +6,8 @@ WORKDIR /usr/app
 
 COPY * /usr/app/
 
+RUN ls -l
+
 RUN mvn clean compile -DskipTests
 
 RUN mvn package -DskipTests
