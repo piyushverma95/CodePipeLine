@@ -8,7 +8,7 @@ public class HomeController {
 	
 	@GetMapping("/")
 	public String hello() {
-		return "Good Afternoonmmmmm!";
+		return "Good Afternoonmmmmm!   :  "+System.currentTimeMillis();
 	}
 	
 }
